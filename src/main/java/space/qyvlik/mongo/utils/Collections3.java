@@ -75,6 +75,7 @@ public class Collections3 {
             List<T> item = Lists.newLinkedList();
 
             while( start < end) {
+                // O(1) or O(n)
                 item.add(list.get(start));
                 start++;
             }

@@ -23,9 +23,6 @@ import java.util.Map;
 @Service
 public class OrderService {
 
-    public static final String ORDER = "qyvlik.space.Order";
-    public static final String SUB_ORDER = "qyvlik.space.SubOrder";
-
     protected Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
@@ -46,7 +43,7 @@ public class OrderService {
         }
         Query query = Query.query(Criteria.where("_id").in(idList));
         List<SubOrderMO> subOrderMOList =
-                mongoTemplate.find(query, SubOrderMO.class, SUB_ORDER);
+                mongoTemplate.find(query, SubOrderMO.class);
         Map<Long, SubOrderMO> subOrderMOMap = Maps.newHashMap();
         for (SubOrderMO subOrderMO : subOrderMOList) {
             subOrderMOMap.put(subOrderMO.getId(), subOrderMO);
@@ -82,13 +79,13 @@ public class OrderService {
             );
             Update update = entry.getValue();
 
-            mongoTemplate.updateFirst(orderQuery, update, ORDER);
+            mongoTemplate.updateFirst(orderQuery, update, OrderMO.class);
         }
         stopWatch.stop();
 
 
         stopWatch.start("saveSubOrderList");
-        mongoTemplate.insert(needSaveSubOrderMOList, SUB_ORDER);
+        mongoTemplate.insert(needSaveSubOrderMOList, SubOrder.class);
         stopWatch.stop();
 
         logger.info("updateOrderWhenSubOrderCreate:{}", stopWatch.prettyPrint());
@@ -98,12 +95,13 @@ public class OrderService {
         OrderMO orderMO = new OrderMO();
         orderMO.setId(order.getId());
         orderMO.setTotalAmount(order.getTotalAmount());
-        mongoTemplate.save(orderMO, ORDER);
+        mongoTemplate.save(orderMO);
     }
 
     public Order getOrder(Long id) {
+        // _id 是特殊关键字，与 实体内 被 @Id 标记的属性等价
         Query query = Query.query(Criteria.where("_id").is(id));
-        OrderMO orderMO = mongoTemplate.findOne(query, OrderMO.class, ORDER);
+        OrderMO orderMO = mongoTemplate.findOne(query, OrderMO.class);
         return adaptor(orderMO);
     }
 

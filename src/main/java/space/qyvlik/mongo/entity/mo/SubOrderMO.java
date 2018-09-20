@@ -2,10 +2,14 @@ package space.qyvlik.mongo.entity.mo;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
+// @Document 作用在类声明上，类属性才可以被 @Indexed 标记为索引，@Id 同理
+
+@Document
 public class SubOrderMO implements Serializable {
     @Id
     private long id;
